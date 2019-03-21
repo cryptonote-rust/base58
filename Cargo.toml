@@ -1,0 +1,13 @@
+[package]
+name = "cryptonote-base58"
+version = "0.1.0"
+authors = ["calidion <calidion@gmail.com>"]
+edition = "2018"
+license = "GPL-3.0-or-later"
+description = "base58 for cryptonote"
+
+[dependencies]
+rust-base58 = "0.0.4"
+[badges]
+travis-ci = { repository = "cryptonote-rust/base58", branch = "master" }
+codecov = { repository = "cryptonote-rust/base58", branch = "master", service = "github" }
