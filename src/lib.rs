@@ -2,7 +2,6 @@ use rust_base58::{ToBase58, FromBase58};
 
 const TO_SIZE: usize = 8;
 const FROM_SIZE: usize = 11;
-// const padding: [u8: "1", FROM_SIZE] = ["1": FROM_SIZE];
 
 #[derive(Debug)]
 pub enum Base58Error {
@@ -13,9 +12,7 @@ pub enum Base58Error {
 pub fn to_base58(bytes: Vec<u8>) -> Result<String, Base58Error> {
     let mut base58 = String::new();
     for chunk in bytes.as_slice().chunks(TO_SIZE) {
-        println!(" chunk: {:x?}", chunk);
         let mut part = chunk.to_base58();
-        println!(" chunk len : {}", chunk.len());
         let exp_len = match chunk.len() {
             8 => 11,
             6 => 9,
@@ -26,24 +23,18 @@ pub fn to_base58(bytes: Vec<u8>) -> Result<String, Base58Error> {
         if missing > 0 {
             part.insert_str(0, &"11111111111"[..missing]);
         }
-        println!(" part : {}", part);
         base58.push_str(&part);
     }
-    println!("to base58: \n{:x?}", base58.as_bytes());
-    println!("to base58 str: \n{:x?}", base58);
     Ok(base58)
 }
 
 pub fn from_base58(base58: String) -> Result<Vec<u8>, Base58Error> {
     let mut extracted: Vec<u8> = vec![];
     let bytes = base58.as_bytes();
-    println!("string hex: {:x?}", bytes);
     for chunk in bytes.chunks(FROM_SIZE) {
         let idx = chunk.iter().position(|&c| c != b'1')
             .ok_or(Base58Error::InvalidChunkData)?;
         let part = std::str::from_utf8(&chunk[idx..]).unwrap();
-        println!("part: {}", part);
-        println!("after extracted part: {}", part);
         let exp_len = match chunk.len() {
             11 => 8,
             9 => 6,
@@ -55,10 +46,8 @@ pub fn from_base58(base58: String) -> Result<Vec<u8>, Base58Error> {
         if exp_len != base58_chunk.len() {
             return Err(Base58Error::InvalidChunkLength(chunk.len()));
         }
-        println!("chunk: {:x?}", base58_chunk);
         extracted.append(&mut base58_chunk);
     }
-    println!("from base 58: \n{:x?}", extracted);
     Ok(extracted)
 }
 
